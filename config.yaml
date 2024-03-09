@@ -1,0 +1,44 @@
+name: "XBee Gateway"
+version: "0.0.5"
+stage: stable
+slug: "xbee_gateway"
+description: "XBee Gateway for MQTT"
+codenotary: "helios14_75@hotmail.fr"
+url: "https://github.com/Helios06/xbee_gateway"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: services
+hassio_role: default
+hassio_api: false
+auth_api: false
+ingress: false
+init: false
+options:
+  XBee_Device: "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A700e5FD-if00-port0"
+  XBee_Baud: "115200"
+  XBee_D2_State: "input"
+  XBee_D2_Level: "disabled"
+  MQTT_Host: "homeassistant.local"
+  MQTT_Port: "1883"
+  MQTT_User: "mqtt"
+  MQTT_Password: "mqtt"
+  MQTT_Receive: "xbee_received"
+  MQTT_Send: "send_xbee"
+  ADDON_Logging: "INFO"
+schema:
+  XBee_Device: str
+  XBee_Baud: str
+  XBee_D2_State: str
+  XBee_D2_Level: str
+  MQTT_Host: str
+  MQTT_Port: str
+  MQTT_User: str
+  MQTT_Password: str
+  MQTT_Receive: str
+  MQTT_Send: str
+  ADDON_Logging: str
+devices: [/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A700e5FD-if00-port0]
