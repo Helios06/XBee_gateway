@@ -1,6 +1,6 @@
 # xbee_gateway
 
-This add-on provides à XBee gateway to send/receive messages
+This add-on provides à XBee gateway to drive line passing
 to/from a single XBee or to/from an extended XBee network.
 
 ### Integration with Home Assistant 
@@ -25,8 +25,10 @@ On your Home Assistant you must have configured 2 needed add-ons
 
     XBee_Device: /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A700e5FD-if00-port0
     XBee_Baud: 115200
-    XBee_D2_State: input
-    XBee_D2_Level: high
+    XBee_DIO0_Level: 2
+    XBee_DIO1_Level: 3
+    XBee_DIO2_Level: 
+    XBee_DIO3_Level: 
     MQTT_Host: homeassistant.local
     MQTT_Port: 1883
     MQTT_User: mqtt
@@ -58,9 +60,9 @@ On your Home Assistant you must have configured 2 needed add-ons
 
 - Raspberry PI4B using
   - XBee Pro
-  - Core 2024.3.0
-  - Supervisor 2024.02.1
-  - Operating System 12.0
+  - Core 2024.3.3
+  - Supervisor 2024.03.1
+  - Operating System 12.1
   - Frontend 20240306.0
 
 ### Contributors

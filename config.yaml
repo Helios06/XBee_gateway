@@ -1,5 +1,5 @@
 name: "XBee Gateway"
-version: "0.0.5"
+version: "0.0.7"
 stage: stable
 slug: "xbee_gateway"
 description: "XBee Gateway for MQTT"
@@ -20,8 +20,10 @@ init: false
 options:
   XBee_Device: "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A700e5FD-if00-port0"
   XBee_Baud: "115200"
-  XBee_D2_State: "input"
-  XBee_D2_Level: "disabled"
+  XBee_DIO0_Level: "2"
+  XBee_DIO1_Level: "3"
+  XBee_DIO2_Level: "\"\""
+  XBee_DIO3_Level: "\"\""
   MQTT_Host: "homeassistant.local"
   MQTT_Port: "1883"
   MQTT_User: "mqtt"
@@ -32,8 +34,10 @@ options:
 schema:
   XBee_Device: str
   XBee_Baud: str
-  XBee_D2_State: str
-  XBee_D2_Level: str
+  XBee_DIO0_Level: str
+  XBee_DIO1_Level: str
+  XBee_DIO2_Level: str
+  XBee_DIO3_Level: str
   MQTT_Host: str
   MQTT_Port: str
   MQTT_User: str
