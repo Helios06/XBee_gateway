@@ -1,5 +1,13 @@
 ## Changelog
 
+### 0.0.7
+- updating Docs.md and README.md
+- Logs handle date time
+
+### 0.0.6
+- updating Docs.md and README.md
+- handles now line passing for lines DIO0, DIO1, DIO2, DIO3
+
 ### 0.0.5
 - updating Docs.md and README.md
 

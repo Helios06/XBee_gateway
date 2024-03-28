@@ -56,6 +56,7 @@ class xbee(xbee_io):
     Cmd_CoordinatorEnable = "ATCE"
     Cmd_Channel = "ATCH"
     Cmd_CommandModeTimeout = "ATCT"
+    Cmd_DI0Configuration = "ATD"
     Cmd_DI00Configuration = "ATD0"
     Cmd_DI01Configuration = "ATD1"
     Cmd_DI02Configuration = "ATD2"
@@ -99,7 +100,7 @@ class xbee(xbee_io):
     Cmd_Pwm0Configuration = "ATP0"
     Cmd_Pwm1Configuration = "ATP1"
     Cmd_PowerLevel = "ATPL"
-    Cmd_PullupResistorEnable = "ATPR"
+    Cmd_PullUpResistorEnable = "ATPR"
     Cmd_PwmOutputTimeout = "ATPT"
     Cmd_RestoreDefaults = "ATRE"
     Cmd_RandomDelaySlots = "ATRN"
@@ -118,7 +119,7 @@ class xbee(xbee_io):
     Cmd_Write = "ATWR"
 
     # XBee Pro High level Commands
-    Cmd_FastGetParms = "ATCH,BD,HV,VR,ID,SH,SL,PL,DH,DL,MY"
+    Cmd_FastGetParams = "ATCH,BD,HV,VR,ID,SH,SL,PL,DH,DL,MY"
     Cmd_FullInit = "ATMM1,MYFFFF,SP0,RR0,RO3,WR"
     Cmd_ReBoot = "ATFR"
     Cmd_FastCoordinatorAssociation = "ATA27,CE1,WR"
@@ -139,7 +140,7 @@ class xbee(xbee_io):
         # set logger
         # DEBUG INFO WARNING ERROR CRITICAL
         # logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
-        logging.basicConfig(level=loglevel)
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=loglevel)
         xbee_io.__init__(self, loglevel, device, baud_rate)  # since inherited, needs to be called explicitly
 
     def __del__(self):
@@ -208,19 +209,49 @@ class xbee(xbee_io):
             self.writeCommandAndWaitOK(self.Cmd_FirmwareVersionVerbose)
             self.writeCommandAndWaitOK(self.Cmd_Channel)
             self.writeCommandAndWaitOK(self.Cmd_PanId)
+            logging.debug("... XBee serial number, source address")
             self.writeCommandAndWaitOK(self.Cmd_SerialNumberHigh)
             self.writeCommandAndWaitOK(self.Cmd_SerialNumberLow)
+            time.sleep(0.1)
+            logging.debug("... XBee destination address")
             self.writeCommandAndWaitOK(self.Cmd_DestinationAddressHigh + "13A200")
-            self.writeCommandAndWaitOK(self.Cmd_DestinationAddressLow + "40621D6C")
+            self.writeCommandAndWaitOK(self.Cmd_DestinationAddressLow + "405C44E2")
             self.writeCommandAndWaitOK(self.Cmd_DestinationAddressHigh)
             self.writeCommandAndWaitOK(self.Cmd_DestinationAddressLow)
-            self.exitCommandMode()
+            time.sleep(0.1)
+            logging.debug("... XBee set MY address")
+            self.writeCommandAndWaitOK("ATMYFFFF")  # digital io
+            time.sleep(0.1)
+            self.setDigitalIOHigh("2")
             time.sleep(1)
+            self.setDigitalIOHigh("3")
+            time.sleep(0.1)
+            self.exitCommandMode()
             self.flushXBeeIoDevice()
             self.ApiSem.release()
             logging.debug("... Init XBee device done")
         else:
             logging.error("Init, XBee device, not opened !")
+
+    def setDigitalIOLow(self, dio: str):
+        if self.Opened:
+            logging.debug("")
+            logging.debug("... set XBee Digital IO "+dio+" low")
+            self.writeCommandAndWaitOK(self.Cmd_DI0Configuration+dio+"=4") # output low
+            time.sleep(1)
+            logging.debug("...... set XBee Digital IO "+dio+" low done")
+        else:
+            logging.error("... set XBee Digital IO "+dio+" low, not opened !")
+
+    def setDigitalIOHigh(self, dio: str):
+        if self.Opened:
+            logging.debug("")
+            logging.debug("... set XBee Digital IO "+dio+" high")
+            self.writeCommandAndWaitOK(self.Cmd_DI0Configuration+dio+"=5") # output high
+            time.sleep(1)
+            logging.debug("...... set XBee Digital IO "+dio+" high done")
+        else:
+            logging.error("... set XBee Digital IO "+dio+" high, not opened !")
 
     # Start activity thread
     def startXBeeReader(self):
@@ -243,10 +274,26 @@ class xbee(xbee_io):
     def runXBeeReaderThread(self):
         # SMS Reader, will post to MQTT
         while getattr(self.XBeeReaderThread, "isRunning", True):
-            new_sms = self.readData()
+            #new_sms = self.readData()
             time.sleep(1)
 
     @staticmethod
     def readData():
         result = ""
         return result
+
+    def sendXBeeMessage(self, channel: str, command: str):
+        logging.debug("Sending command to XBee")
+        if command == "on":
+            self.ApiSem.acquire()
+            self.enterCommandMode()
+            self.setDigitalIOLow(channel)
+            self.exitCommandMode()
+            self.ApiSem.release()
+        else:
+            self.ApiSem.acquire()
+            self.enterCommandMode()
+            self.setDigitalIOHigh(channel)
+            self.exitCommandMode()
+            self.ApiSem.release()
+        logging.debug("... sending command to XBee, done")

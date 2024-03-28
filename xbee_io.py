@@ -43,7 +43,7 @@ class xbee_io:
         self.XBeeIoOKReceived        = False
         self.XBeeIoFrameReceived     = ""
         # logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
-        logging.basicConfig(level=loglevel)
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=loglevel)
 
     def __del__(self):
         if self.Opened:
@@ -99,7 +99,7 @@ class xbee_io:
     def exitCommandMode(self):
         self.writeCommandAndWaitOK(self.Cmd_XBeeExitCommandMode)
 
-    def writeCommandAndWaitOK(self, frame: bytes):
+    def writeCommandAndWaitOK(self, frame: str):
         # frame is bytes
         self.XBeeIoOKReceived = False
         self.writeData(bytes(frame, 'ascii'))

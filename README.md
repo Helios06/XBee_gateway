@@ -1,6 +1,6 @@
 # xbee_gateway
 
-This add-on provides à XBee gateway to send/receive messages
+This add-on provides à XBee gateway to drive line passing
 to/from a single XBee or to/from an extended XBee network.
 
 ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
